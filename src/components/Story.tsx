@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { ArrowRight, Check } from "lucide-react";
-import { CHAPTERS } from "../data";
+import { CHAPTERS, TRIAL_URL } from "../data";
 import { StoryScene } from "../three/StoryScene";
 import { clamp, sstep } from "../three/common";
 import { gsap } from "./useReveal";
@@ -20,23 +20,22 @@ function HeroText({ onDiscover }: { onDiscover: () => void }) {
         Une suite. Tous vos métiers. Une seule plateforme.
       </p>
       <h1 data-intro className="max-w-4xl text-[clamp(2.2rem,min(6.2vw,7.6vh),5rem)] font-semibold leading-[1.03] tracking-[-0.035em] text-ink">
-        Votre activité.
+        Gérez votre métier.
         <br />
         <span className="bg-gradient-to-b from-ink to-slate-500 bg-clip-text text-transparent">Une seule plateforme.</span>
       </h1>
       <p data-intro className="mt-5 max-w-2xl text-[clamp(0.95rem,1.5vw,1.2rem)] leading-relaxed text-slate-600">
-        NCR Suite centralise votre gestion, vos clients, votre planning, vos documents et vos outils métier dans un
-        environnement unique.
+        Clients, équipes, planning, documents et facturation : NCR Suite relie vos opérations dans un environnement adapté à votre métier.
       </p>
       <div data-intro className="mt-7 flex w-full max-w-sm flex-col items-stretch gap-3 sm:w-auto sm:max-w-none sm:flex-row sm:items-center">
-        <button type="button" onClick={onDiscover} className="btn btn-primary">
-          Découvrir NCR Suite
+        <a href={TRIAL_URL} className="btn btn-primary">
+          Essai gratuit de 7 jours
           <ArrowRight size={17} aria-hidden="true" />
-        </button>
-        <a href="#metiers" className="btn btn-ghost">
-          Voir les solutions
         </a>
+        <button type="button" onClick={onDiscover} className="btn btn-ghost">Explorer la plateforme</button>
       </div>
+      <p data-intro className="mt-3 max-w-lg text-xs leading-relaxed text-slate-600">Formation · Sécurité privée · Nettoyage · Restauration · Coiffure-beauté<br />Essai Professionnelle après validation · Sans carte bancaire</p>
+      <p className="mt-2 text-[0.65rem] text-slate-500">Interfaces illustratives · Fonctions selon métier et formule</p>
     </div>
   );
 }
@@ -78,12 +77,12 @@ export default function Story({ effects, views, images, onFail }: Props) {
     const sec = secRef.current;
     if (!sec) return;
     if (!effects) {
-      document.getElementById(CHAPTERS[i - 1]?.id ?? "gerez")?.scrollIntoView({ behavior: "smooth" });
+      document.getElementById(CHAPTERS[i - 1]?.id ?? "gerez")?.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
       return;
     }
     const total = sec.offsetHeight - window.innerHeight;
     const top = window.scrollY + sec.getBoundingClientRect().top + (i / 5) * total;
-    window.scrollTo({ top, behavior: "smooth" });
+    window.scrollTo({ top, behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
   };
 
   useEffect(() => {
@@ -97,7 +96,7 @@ export default function Story({ effects, views, images, onFail }: Props) {
         el.style.opacity = op.toFixed(3);
         el.style.transform = `translate3d(0,${ty.toFixed(1)}px,0)`;
         el.style.pointerEvents = op > 0.5 ? "auto" : "none";
-        el.toggleAttribute("inert", op < 0.05);
+        el.toggleAttribute("inert", op < 0.5);
       });
       const cur = Math.round(s);
       dots.current.forEach((d, i) => d && (d.dataset.on = String(i === cur)));
@@ -166,7 +165,7 @@ export default function Story({ effects, views, images, onFail }: Props) {
           <div className="mx-auto mt-14 w-[min(92vw,1000px)]">
             <div className="rounded-[1.6rem] bg-[#14171d] p-2.5 shadow-[0_50px_100px_-30px_rgba(16,24,40,0.45)] sm:p-3.5">
               {images ? (
-                <img src={images[0]} alt="Tableau de bord NCR Suite" className="aspect-[1.6] w-full rounded-2xl" />
+                <img src={images[0]} alt="Illustration du poste de pilotage NCR Suite, sans données réelles" className="aspect-[1.6] w-full rounded-2xl" />
               ) : (
                 <div className="aspect-[1.6] w-full rounded-2xl bg-slate-100" />
               )}
@@ -185,7 +184,7 @@ export default function Story({ effects, views, images, onFail }: Props) {
               </div>
               <div className="rounded-[1.4rem] bg-[#14171d] p-2 shadow-[0_40px_80px_-30px_rgba(16,24,40,0.4)] sm:p-3">
                 {images ? (
-                  <img src={images[c.view]} alt={`Interface NCR Suite — ${c.title}`} loading="lazy" className="aspect-[1.6] w-full rounded-xl" />
+                  <img src={images[c.view]} alt={`Illustration NCR Suite — ${c.title}, sans données réelles`} loading="lazy" className="aspect-[1.6] w-full rounded-xl" />
                 ) : (
                   <div className="aspect-[1.6] w-full rounded-xl bg-slate-100" />
                 )}
@@ -223,7 +222,7 @@ export default function Story({ effects, views, images, onFail }: Props) {
             }`}
           >
             <div
-              ref={(el) => { blocks.current[i + 1] = el; }}
+              ref={(el) => { blocks.current[i + 1] = el; if (el) el.inert = true; }}
               className="glass-m rounded-3xl p-5 opacity-0 will-change-transform sm:p-6 lg:p-0"
             >
               <ChapterText c={c} i={i} />

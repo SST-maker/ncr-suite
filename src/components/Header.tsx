@@ -1,13 +1,13 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Menu, X } from "lucide-react";
 import { Logo } from "./Logo";
-import { SITE_URL } from "../data";
+import { TRIAL_URL, LOGIN_URL } from "../data";
 
 const NAV = [
   { href: "#plateforme", label: "Plateforme" },
   { href: "#metiers", label: "Métiers" },
   { href: "#produit", label: "Produit" },
-  { href: "#avantages", label: "Avantages" },
+  { href: "#offres", label: "Offres" },
   { href: "#faq", label: "FAQ" },
 ];
 
@@ -34,6 +34,15 @@ function Toggle3D({ on, onToggle }: { on: boolean; onToggle: () => void }) {
 export default function Header({ effects, onToggle }: { effects: boolean; onToggle: () => void }) {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const menuButton = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") { setOpen(false); menuButton.current?.focus(); } };
+    const onResize = () => { if (window.innerWidth >= 1024) setOpen(false); };
+    document.addEventListener("keydown", onKey);
+    window.addEventListener("resize", onResize);
+    return () => { document.removeEventListener("keydown", onKey); window.removeEventListener("resize", onResize); };
+  }, [open]);
 
   useEffect(() => {
     const on = () => setScrolled(window.scrollY > 24);
@@ -57,7 +66,7 @@ export default function Header({ effects, onToggle }: { effects: boolean; onTogg
         <a href="#plateforme" aria-label="NCR Suite — accueil">
           <Logo />
         </a>
-        <nav aria-label="Navigation principale" className="hidden items-center gap-1 md:flex">
+        <nav aria-label="Navigation principale" className="hidden items-center gap-1 lg:flex">
           {NAV.map((n) => (
             <a key={n.href} href={n.href} className="rounded-full px-3.5 py-2 text-[0.88rem] font-medium text-slate-600 transition hover:bg-black/5 hover:text-ink">
               {n.label}
@@ -65,16 +74,19 @@ export default function Header({ effects, onToggle }: { effects: boolean; onTogg
           ))}
         </nav>
         <div className="flex items-center gap-1.5">
-          <div className="hidden md:block">
+          <div className="hidden lg:block">
             <Toggle3D on={effects} onToggle={onToggle} />
           </div>
-          <a href={SITE_URL} className="btn btn-primary !h-9 !px-4 !text-[0.85rem]">
-            Découvrir
+          <a href={LOGIN_URL} className="hidden rounded-full px-3 py-2 text-sm font-medium text-slate-600 hover:bg-black/5 xl:inline-flex">Connexion</a>
+          <a href={TRIAL_URL} className="btn btn-primary !h-9 !px-4 !text-[0.85rem]">
+            Essai 7 jours
           </a>
           <button
             type="button"
-            className="flex h-9 w-9 items-center justify-center rounded-full text-ink hover:bg-black/5 md:hidden"
+            className="flex h-9 w-9 items-center justify-center rounded-full text-ink hover:bg-black/5 lg:hidden"
             aria-label={open ? "Fermer le menu" : "Ouvrir le menu"}
+            ref={menuButton}
+            aria-controls="mobile-nav"
             aria-expanded={open}
             onClick={() => setOpen((v) => !v)}
           >
@@ -83,12 +95,13 @@ export default function Header({ effects, onToggle }: { effects: boolean; onTogg
         </div>
       </div>
       {open && (
-        <nav aria-label="Menu mobile" className="mx-auto mt-2 w-[min(94vw,1180px)] rounded-3xl border border-white/70 bg-white/90 p-3 shadow-xl backdrop-blur-xl md:hidden">
+        <nav id="mobile-nav" aria-label="Menu mobile" className="mx-auto mt-2 w-[min(94vw,1180px)] rounded-3xl border border-white/70 bg-white/90 p-3 shadow-xl backdrop-blur-xl lg:hidden">
           {NAV.map((n) => (
             <a key={n.href} href={n.href} onClick={() => setOpen(false)} className="block rounded-2xl px-4 py-3 text-base font-medium text-ink hover:bg-black/5">
               {n.label}
             </a>
           ))}
+          <a href={LOGIN_URL} className="block rounded-2xl px-4 py-3 font-medium text-ink">Se connecter</a>
           <div className="mt-1 border-t border-black/5 px-2 pt-2">
             <Toggle3D on={effects} onToggle={onToggle} />
           </div>

@@ -4,40 +4,34 @@ import Story from "./components/Story";
 import Metiers from "./components/Metiers";
 import Produit from "./components/Produit";
 import Avantages from "./components/Avantages";
+import Offres from "./components/Offres";
 import Faq from "./components/Faq";
 import Final from "./components/Final";
 import Footer from "./components/Footer";
 import { isCompact } from "./three/common";
 import { buildMobileView, buildView, VIEW_COUNT } from "./three/ui";
 
-function webglAvailable() {
+// One probe, released immediately: avoid accumulating WebGL contexts on resize.
+const graphics = (() => {
   try {
-    const c = document.createElement("canvas");
-    return !!(c.getContext("webgl2") || c.getContext("webgl"));
-  } catch {
-    return false;
-  }
-}
-
-function maxTextureSize() {
-  try {
-    const gl = document.createElement("canvas").getContext("webgl2") || document.createElement("canvas").getContext("webgl");
-    if (gl) return gl.getParameter(gl.MAX_TEXTURE_SIZE) as number;
-  } catch {
-    /* valeur par défaut */
-  }
-  return 4096;
-}
+    const canvas = document.createElement("canvas");
+    const gl = canvas.getContext("webgl2") || canvas.getContext("webgl");
+    if (!gl) return { available: false, maxTexture: 4096 };
+    const maxTexture = gl.getParameter(gl.MAX_TEXTURE_SIZE) as number;
+    gl.getExtension("WEBGL_lose_context")?.loseContext();
+    return { available: true, maxTexture };
+  } catch { return { available: false, maxTexture: 4096 }; }
+})();
 
 /** Échelle de dessin des écrans de bureau (base 1024×640) : 3x = 3072×1920 px, au-delà du Full HD. */
 function desktopScale() {
-  return Math.max(1.5, Math.min(3, maxTextureSize() / 1024));
+  return Math.max(1.5, Math.min(3, graphics.maxTexture / 1024));
 }
 
 /** Échelle des écrans mobiles (base 480×600) : ~1200×1500 px, calée sur la densité de l'appareil pour éviter tout flou de mipmap. */
 function mobileScale() {
   const dpr = window.devicePixelRatio || 1;
-  return Math.max(1.75, Math.min(dpr >= 3 ? 2.6 : 2.2, maxTextureSize() / 600));
+  return Math.max(1.75, Math.min(dpr >= 3 ? 2.6 : 2.2, graphics.maxTexture / 600));
 }
 
 interface Assets {
@@ -54,14 +48,24 @@ const toUrl = (c: HTMLCanvasElement) =>
 export default function App() {
   const [effects, setEffects] = useState(() => {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    return !reduced && webglAvailable();
+    return !reduced && graphics.available && !(window.innerHeight < 540 && window.innerWidth < 1024);
   });
   const [assets, setAssets] = useState<Assets | null>(null);
   const [compact, setCompact] = useState(() => isCompact());
 
+  useEffect(() => {
+    const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const onChange = () => { if (preference.matches) setEffects(false); };
+    preference.addEventListener("change", onChange);
+    return () => preference.removeEventListener("change", onChange);
+  }, []);
+
   // bascule portrait/paysage ou redimensionnement : on régénère l'interface adaptée
   useEffect(() => {
-    const on = () => setCompact(isCompact());
+    const on = () => {
+      setCompact(isCompact());
+      if (window.innerHeight < 540 && window.innerWidth < 1024) setEffects(false);
+    };
     window.addEventListener("resize", on);
     return () => window.removeEventListener("resize", on);
   }, []);
@@ -69,6 +73,14 @@ export default function App() {
   // Les interfaces sont dessinées une fois les polices chargées
   useEffect(() => {
     let cancelled = false;
+    const urls: string[] = [];
+    const imageUrl = async (canvas: HTMLCanvasElement) => {
+      const url = await toUrl(canvas);
+      if (cancelled) URL.revokeObjectURL(url);
+      else urls.push(url);
+      return url;
+    };
+    setAssets(null);
     const run = async () => {
       try {
         const fonts = document.fonts;
@@ -95,7 +107,7 @@ export default function App() {
         // images du site (galerie, version statique) : format bureau, générées une à une puis libérées
         const images: string[] = [];
         for (let i = 0; i < VIEW_COUNT; i++) {
-          images.push(await toUrl(buildView(i, 1.75)));
+          images.push(await imageUrl(buildView(i, 1.75)));
           if (cancelled) return;
         }
         setAssets({ views, images });
@@ -107,13 +119,14 @@ export default function App() {
           if (cancelled) return;
         }
         setAssets({ views, images: null });
-        const images = await Promise.all(views.map(toUrl));
+        const images = await Promise.all(views.map(imageUrl));
         if (!cancelled) setAssets({ views, images });
       }
     };
-    run();
+    void run().catch(() => { if (!cancelled) setEffects(false); });
     return () => {
       cancelled = true;
+      urls.forEach(url => URL.revokeObjectURL(url));
     };
   }, [compact]);
 
@@ -127,6 +140,7 @@ export default function App() {
         <Metiers />
         <Produit images={assets?.images ?? null} />
         <Avantages />
+        <Offres />
         <Faq />
         <Final effects={effects} views={assets?.views ?? null} onFail={fail} />
       </main>

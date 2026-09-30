@@ -225,8 +225,8 @@ function shell(ctx: Ctx, active: number, title: string) {
     t(ctx, s, 50, y + 12, 12.5, on ? 600 : 500, on ? C.blue : C.sub);
   });
   rr(ctx, 12, 572, 144, 52, 12, C.bg);
-  avatar(ctx, 34, 598, 14, "CM", C.blue);
-  t(ctx, "Camille Martin", 54, 592, 11, 600, C.ink);
+  avatar(ctx, 34, 598, 14, "EQ", C.blue);
+  t(ctx, "Votre équipe", 54, 592, 11, 600, C.ink);
   t(ctx, "Administrateur", 54, 607, 9.5, 400, C.mute);
   // topbar
   ctx.fillStyle = "#fff";
@@ -240,7 +240,7 @@ function shell(ctx: Ctx, active: number, title: string) {
   ctx.strokeStyle = C.mute;
   ctx.lineWidth = 1.5;
   ctx.stroke();
-  t(ctx, "Rechercher…", 622, 31.5, 11.5, 500, C.mute);
+  t(ctx, "VUE ILLUSTRATIVE", 622, 31.5, 10, 600, C.sub);
   rr(ctx, 806, 17, 28, 28, 14, C.bg);
   ctx.beginPath();
   ctx.arc(820, 31, 3.5, 0, Math.PI * 2);
@@ -258,13 +258,13 @@ function shell(ctx: Ctx, active: number, title: string) {
 
 function viewDashboard(ctx: Ctx) {
   shell(ctx, 0, "Tableau de bord");
-  t(ctx, "Bonjour Camille", 192, 92, 22, 700);
+  t(ctx, "Votre activité", 192, 92, 22, 700);
   t(ctx, "Voici l’activité de votre entreprise aujourd’hui.", 192, 116, 12.5, 400, C.sub);
   const kp: [string, string, string, string, number[]][] = [
-    ["Chiffre d’affaires", "48 920 €", "+12,4 %", C.green, [3, 4, 3.6, 5, 4.8, 6, 7.2]],
-    ["Clients actifs", "1 284", "+38 ce mois", C.blue, [2, 2.5, 3, 3.1, 4, 4.2, 5]],
-    ["Interventions", "86", "+9 %", C.violet, [5, 3, 4.5, 4, 6, 5.5, 7]],
-    ["Factures en attente", "12", "3 en retard", C.amber, [6, 5, 5.5, 4, 4.5, 3.5, 3.8]],
+    ["Chiffre d’affaires", "—", "—", C.green, [3, 4, 3.6, 5, 4.8, 6, 7.2]],
+    ["Clients actifs", "—", "Suivi", C.blue, [2, 2.5, 3, 3.1, 4, 4.2, 5]],
+    ["Interventions", "—", "—", C.violet, [5, 3, 4.5, 4, 6, 5.5, 7]],
+    ["Factures en attente", "—", "À suivre", C.amber, [6, 5, 5.5, 4, 4.5, 3.5, 3.8]],
   ];
   const w = 193.5;
   kp.forEach(([label, val, d, col, data], i) => {
@@ -291,7 +291,7 @@ function viewDashboard(ctx: Ctx) {
     const y = gy + (gh * i) / 4;
     ctx.fillStyle = C.line;
     ctx.fillRect(gx, y, gw, 1);
-    t(ctx, `${60 - i * 15} k`, gx - 14, y, 10, 500, C.mute, "right");
+    t(ctx, "—", gx - 14, y, 10, 500, C.mute, "right");
   }
   const mo = ["Jan", "Fév", "Mar", "Avr", "Mai", "Juin", "Juil", "Août", "Sep", "Oct", "Nov", "Déc"];
   mo.forEach((m, i) => i % 2 === 0 && t(ctx, m, gx + (gw * i) / 11, gy + gh + 18, 10, 500, C.mute, "center"));
@@ -304,16 +304,16 @@ function viewDashboard(ctx: Ctx) {
   ctx.strokeStyle = C.blue;
   ctx.stroke();
   rr(ctx, end[0] - 78, end[1] - 6, 70, 24, 8, C.ink);
-  t(ctx, "48 920 €", end[0] - 43, end[1] + 6.5, 11, 600, "#fff", "center");
+  t(ctx, "—", end[0] - 43, end[1] + 6.5, 11, 600, "#fff", "center");
   // tasks
   card(ctx, 702, 252, 302, 360);
   t(ctx, "Aujourd’hui", 722, 278, 14, 700);
-  pill(ctx, "4 tâches", 932, 278, C.blue, C.blueSoft, 10);
+  pill(ctx, "Suivi", 932, 278, C.blue, C.blueSoft, 10);
   const tasks: [string, string, string, string][] = [
-    ["09:30", "Rendez-vous Atelier Moreau", "Visite de chantier", C.blue],
-    ["11:00", "Validation devis D-2041", "3 240,00 € · Cabinet Lefèvre", C.violet],
-    ["14:00", "Intervention Garage Delmas", "Maintenance annuelle", C.green],
-    ["16:30", "Relance des factures", "3 factures en retard", C.amber],
+    ["09:30", "Rendez-vous client", "Suivi de session", C.blue],
+    ["11:00", "Validation du devis", "— · Dossier commercial", C.violet],
+    ["14:00", "Intervention Site d’intervention", "Prestation programmée", C.green],
+    ["16:30", "Suivi des factures", "Documents à suivre", C.amber],
   ];
   tasks.forEach(([time, title, sub, col], i) => {
     const y = 308 + i * 74;
@@ -328,7 +328,7 @@ function viewDashboard(ctx: Ctx) {
 function viewClients(ctx: Ctx) {
   shell(ctx, 1, "Clients");
   t(ctx, "Tous les clients", 192, 92, 22, 700);
-  t(ctx, "1 284 clients · 38 nouveaux ce mois", 192, 116, 12.5, 400, C.sub);
+  t(ctx, "Fiches, documents et suivi client", 192, 116, 12.5, 400, C.sub);
   const chips = ["Tous", "Actifs", "Prospects", "À relancer"];
   let cx = 640;
   chips.forEach((s, i) => {
@@ -345,14 +345,14 @@ function viewClients(ctx: Ctx) {
   );
   t(ctx, "Chiffre d’affaires", 984, 160, 10.5, 600, C.mute, "right");
   const rows: [string, string, string, string, string, string, string][] = [
-    ["Atelier Moreau", "contact@atelier-moreau.fr", "Artisanat", "Hier", "Actif", "4 280 €", C.blue],
-    ["Clinique du Parc", "accueil@cliniqueduparc.fr", "Santé", "Il y a 2 j", "Prospect", "—", C.violet],
-    ["Cabinet Lefèvre", "hello@lefevre-conseil.fr", "Conseil", "Aujourd’hui", "Actif", "12 640 €", C.green],
-    ["Boulangerie Martin", "bonjour@maison-martin.fr", "Commerce", "Il y a 3 j", "Actif", "1 920 €", C.amber],
-    ["Résidence Horizon", "gestion@horizon-immo.fr", "Immobilier", "Il y a 1 sem.", "En attente", "7 350 €", "#0891b2"],
-    ["Académie Nova", "contact@academie-nova.fr", "Formation", "Hier", "Actif", "5 100 €", "#db2777"],
-    ["Garage Delmas", "atelier@garage-delmas.fr", "Automobile", "Il y a 4 j", "Actif", "2 740 €", "#475467"],
-    ["Studio Lumière", "studio@lumiere-photo.fr", "Création", "Il y a 5 j", "Prospect", "—", "#ea580c"],
+    ["Dossier client", "Coordonnées du dossier", "Formation", "Hier", "Actif", "—", C.blue],
+    ["Prospect", "Coordonnées du dossier", "Coiffure", "Il y a 2 j", "Prospect", "—", C.violet],
+    ["Dossier commercial", "Coordonnées du dossier", "Sécurité", "Aujourd’hui", "Actif", "—", C.green],
+    ["Client restauration", "Coordonnées du dossier", "Restauration", "Il y a 3 j", "Actif", "—", C.amber],
+    ["Site client", "Coordonnées du dossier", "Nettoyage", "Il y a 1 sem.", "En attente", "—", "#0891b2"],
+    ["Organisme formation", "Coordonnées du dossier", "Formation", "Hier", "Actif", "—", "#db2777"],
+    ["Site d’intervention", "Coordonnées du dossier", "Nettoyage", "Il y a 4 j", "Actif", "—", "#475467"],
+    ["Client salon", "Coordonnées du dossier", "Coiffure", "Il y a 5 j", "Prospect", "—", "#ea580c"],
   ];
   rows.forEach(([name, mail, sec, last, st, amt, col], i) => {
     const y = 180 + i * 53;
@@ -374,8 +374,8 @@ function viewClients(ctx: Ctx) {
 
 function viewPlanning(ctx: Ctx) {
   shell(ctx, 2, "Planning");
-  t(ctx, "Semaine du 9 au 13 juin", 192, 92, 22, 700);
-  t(ctx, "14 rendez-vous · 3 interventions sur site", 192, 116, 12.5, 400, C.sub);
+  t(ctx, "Planning de la semaine", 192, 92, 22, 700);
+  t(ctx, "Sessions, vacations et rendez-vous", 192, 116, 12.5, 400, C.sub);
   ["Jour", "Semaine", "Mois"].forEach((s, i) => {
     const x = 820 + i * 62;
     rr(ctx, x, 80, 56, 28, 14, i === 1 ? C.ink : "#fff", i === 1 ? undefined : C.line);
@@ -402,16 +402,16 @@ function viewPlanning(ctx: Ctx) {
     ctx.fillRect(X + tc + cw * i, Y + hh, 1, H - hh - 1);
   }
   const ev: [number, number, number, string, string, string, string][] = [
-    [0, 9, 1.5, "RDV Atelier Moreau", "Visite de chantier", C.blue, C.blueSoft],
-    [0, 14, 1, "Appel Clinique du Parc", "Nouveau prospect", C.violet, C.violetSoft],
-    [1, 8.5, 2, "Intervention Delmas", "Garage · Lyon 6e", C.greenInk, C.greenSoft],
-    [1, 13, 1.5, "Réunion d’équipe", "Salle Horizon", C.amberInk, C.amberSoft],
-    [2, 10, 1.25, "Signature contrat", "Cabinet Lefèvre", C.violet, C.violetSoft],
-    [2, 14.5, 1.5, "Livraison Martin", "Boulangerie", C.blue, C.blueSoft],
-    [3, 9, 2.5, "Formation Académie Nova", "Session 2 sur 3", C.greenInk, C.greenSoft],
-    [3, 14, 1, "Validation devis D-2041", "À valider", C.amberInk, C.amberSoft],
+    [0, 9, 1.5, "Session de formation", "Suivi de session", C.blue, C.blueSoft],
+    [0, 14, 1, "Appel prospect", "Nouveau prospect", C.violet, C.violetSoft],
+    [1, 8.5, 2, "Prestation sur site", "Équipe terrain", C.greenInk, C.greenSoft],
+    [1, 13, 1.5, "Réunion d’équipe", "Équipe", C.amberInk, C.amberSoft],
+    [2, 10, 1.25, "Signature contrat", "Dossier commercial", C.violet, C.violetSoft],
+    [2, 14.5, 1.5, "Préparation du service", "Restauration", C.blue, C.blueSoft],
+    [3, 9, 2.5, "Session de formation", "Session 2 sur 3", C.greenInk, C.greenSoft],
+    [3, 14, 1, "Validation du devis", "À valider", C.amberInk, C.amberSoft],
     [4, 11, 1.5, "Point trésorerie", "Direction", C.blue, C.blueSoft],
-    [4, 14.5, 1.75, "Installation Horizon", "Résidence · 4 techniciens", C.greenInk, C.greenSoft],
+    [4, 14.5, 1.75, "Prestation de nettoyage", "Équipe affectée", C.greenInk, C.greenSoft],
   ];
   ev.forEach(([d, s, dur, title, sub, fg, bg]) => {
     const x = X + tc + cw * d + 6;
@@ -435,10 +435,10 @@ function viewDocuments(ctx: Ctx) {
   t(ctx, "Documents & automatisations", 192, 92, 22, 700);
   card(ctx, 188, 120, 816, 84);
   const steps: [string, string][] = [
-    ["Devis envoyé", "Généré en 1 clic"],
+    ["Devis envoyé", "Document lié"],
     ["Accepté par le client", "Signature en ligne"],
     ["Facture générée", "Automatique"],
-    ["Relance programmée", "J+7 · J+15"],
+    ["Suivi du dossier", "Historique"],
   ];
   steps.forEach(([a, b], i) => {
     const cx = 188 + 28 + i * 204;
@@ -457,12 +457,12 @@ function viewDocuments(ctx: Ctx) {
   card(ctx, 188, 218, 310, 394);
   t(ctx, "Documents récents", 208, 244, 14, 700);
   const docs: [string, string, string, string, string, string][] = [
-    ["Devis D-2041", "Cabinet Lefèvre · 12 juin", "À valider", C.amberInk, C.amberSoft, C.amber],
-    ["Facture F-1187", "Atelier Moreau · 11 juin", "Payée", C.greenInk, C.greenSoft, C.green],
-    ["Contrat maintenance", "Garage Delmas · 10 juin", "À signer", C.blue, C.blueSoft, C.blue],
-    ["Facture F-1186", "Académie Nova · 9 juin", "Envoyée", C.violet, C.violetSoft, C.violet],
-    ["Devis D-2040", "Résidence Horizon · 8 juin", "Accepté", C.greenInk, C.greenSoft, C.green],
-    ["Bon de livraison", "Boulangerie Martin · 7 juin", "Livré", C.greenInk, C.greenSoft, C.green],
+    ["Devis client", "Dossier commercial · 12 juin", "À valider", C.amberInk, C.amberSoft, C.amber],
+    ["Facture client", "Dossier client · 11 juin", "Payée", C.greenInk, C.greenSoft, C.green],
+    ["Contrat de prestation", "Site d’intervention · 10 juin", "À signer", C.blue, C.blueSoft, C.blue],
+    ["Facture client", "Organisme formation · 9 juin", "Envoyée", C.violet, C.violetSoft, C.violet],
+    ["Devis client", "Site client · 8 juin", "Accepté", C.greenInk, C.greenSoft, C.green],
+    ["Rapport de visite", "Client restauration · 7 juin", "Archivé", C.greenInk, C.greenSoft, C.green],
   ];
   docs.forEach(([n, s, st, fg, bg, ic], i) => {
     const y = 268 + i * 57;
@@ -477,11 +477,11 @@ function viewDocuments(ctx: Ctx) {
     pill(ctx, st, 480 - w, y + 24, fg, bg, 10);
   });
   card(ctx, 514, 218, 490, 394);
-  t(ctx, "Facture F-1187", 538, 248, 18, 750);
+  t(ctx, "Facture client", 538, 248, 18, 750);
   pill(ctx, "Payée", 940, 248, C.greenInk, C.greenSoft, 10.5);
   t(ctx, "Facturé à", 538, 286, 10, 500, C.mute);
-  t(ctx, "Atelier Moreau", 538, 304, 13, 650);
-  t(ctx, "12 rue des Artisans, 69003 Lyon", 538, 321, 10.5, 400, C.sub);
+  t(ctx, "Dossier client", 538, 304, 13, 650);
+  t(ctx, "Coordonnées du client", 538, 321, 10.5, 400, C.sub);
   t(ctx, "Échéance", 800, 286, 10, 500, C.mute);
   t(ctx, "25 juin", 800, 304, 13, 650);
   rr(ctx, 538, 342, 442, 28, 8, C.bg);
@@ -490,9 +490,9 @@ function viewDocuments(ctx: Ctx) {
   t(ctx, "Prix HT", 870, 356.5, 10, 600, C.mute, "right");
   t(ctx, "Total", 966, 356.5, 10, 600, C.mute, "right");
   const lines: [string, string, string, string][] = [
-    ["Pose et installation", "1", "1 800,00 €", "1 800,00 €"],
-    ["Fournitures menuiserie", "4", "280,00 €", "1 120,00 €"],
-    ["Déplacement & main d’œuvre", "2", "320,00 €", "640,00 €"],
+    ["Prestation programmée", "—", "—", "—"],
+    ["Service complémentaire", "—", "—", "—"],
+    ["Intervention sur site", "—", "—", "—"],
   ];
   lines.forEach(([a, q, p, tt], i) => {
     const y = 388 + i * 34;
@@ -504,11 +504,11 @@ function viewDocuments(ctx: Ctx) {
     ctx.fillRect(538, y + 17, 442, 1);
   });
   t(ctx, "Total HT", 870, 500, 11.5, 500, C.sub, "right");
-  t(ctx, "3 560,00 €", 966, 500, 11.5, 600, C.ink, "right");
-  t(ctx, "TVA 20 %", 870, 520, 11.5, 500, C.sub, "right");
-  t(ctx, "712,00 €", 966, 520, 11.5, 600, C.ink, "right");
+  t(ctx, "—", 966, 500, 11.5, 600, C.ink, "right");
+  t(ctx, "TVA", 870, 520, 11.5, 500, C.sub, "right");
+  t(ctx, "—", 966, 520, 11.5, 600, C.ink, "right");
   t(ctx, "Total TTC", 842, 552, 12, 650, C.ink, "right");
-  t(ctx, "4 272,00 €", 966, 552, 19, 800, C.blue, "right");
+  t(ctx, "—", 966, 552, 19, 800, C.blue, "right");
   rr(ctx, 538, 572, 150, 26, 13, C.blue);
   t(ctx, "Envoyer par e-mail", 613, 585.5, 11, 600, "#fff", "center");
   rr(ctx, 698, 572, 120, 26, 13, "#fff", C.line);
@@ -519,9 +519,9 @@ function viewPilot(ctx: Ctx) {
   shell(ctx, 5, "Statistiques");
   t(ctx, "Pilotage de l’entreprise", 192, 92, 22, 700);
   const k: [string, string, string, string, string][] = [
-    ["Chiffre d’affaires annuel", "412 600 €", "+7,8 %", C.greenInk, C.greenSoft],
-    ["Marge nette", "23,4 %", "+1,2 pt", C.greenInk, C.greenSoft],
-    ["Taux de recouvrement", "96 %", "Objectif 95 %", C.blue, C.blueSoft],
+    ["Pilotage métier", "—", "—", C.greenInk, C.greenSoft],
+    ["Qualité", "—", "Suivi", C.greenInk, C.greenSoft],
+    ["Suivi des dossiers", "—", "Suivi", C.blue, C.blueSoft],
   ];
   const kw = (816 - 28) / 3;
   k.forEach(([l, v, d, fg, bg], i) => {
@@ -534,8 +534,8 @@ function viewPilot(ctx: Ctx) {
     rr(ctx, x + 18, 194, (kw - 36) * (0.55 + i * 0.12), 4, 2, C.blue);
   });
   card(ctx, 188, 224, 500, 388);
-  t(ctx, "Revenus mensuels", 208, 250, 14, 700);
-  t(ctx, "Réalisé vs objectif", 208, 270, 11, 400, C.mute);
+  t(ctx, "Indicateurs d’activité", 208, 250, 14, 700);
+  t(ctx, "Représentation illustrative", 208, 270, 11, 400, C.mute);
   const vals = [38, 44, 41, 52, 49, 58, 55, 63, 60, 71, 68, 82];
   const bx = 236, by = 300, bw = 440, bh = 270;
   for (let i = 0; i <= 4; i++) {
@@ -566,10 +566,10 @@ function viewPilot(ctx: Ctx) {
   ctx.stroke();
   ctx.restore();
   rr(ctx, bx + bw - 76, by + bh - (60 / 90) * bh - 26, 76, 20, 6, C.ink);
-  t(ctx, "Objectif", bx + bw - 38, by + bh - (60 / 90) * bh - 15.5, 10, 600, "#fff", "center");
+  t(ctx, "Repère", bx + bw - 38, by + bh - (60 / 90) * bh - 15.5, 10, 600, "#fff", "center");
   card(ctx, 702, 224, 302, 186);
-  t(ctx, "Répartition par secteur", 722, 250, 14, 700);
-  const segs: [number, string, string][] = [[0.46, C.blue, "Artisanat · 46 %"], [0.31, C.violet, "Conseil · 31 %"], [0.23, C.amber, "Commerce · 23 %"]];
+  t(ctx, "Activité par métier", 722, 250, 14, 700);
+  const segs: [number, string, string][] = [[0.46, C.blue, "Formation"], [0.31, C.violet, "Sécurité"], [0.23, C.amber, "Nettoyage"]];
   let a0 = -Math.PI / 2;
   segs.forEach(([p, col]) => {
     const a1 = a0 + p * Math.PI * 2;
@@ -581,19 +581,19 @@ function viewPilot(ctx: Ctx) {
     ctx.stroke();
     a0 = a1;
   });
-  t(ctx, "412 k", 780, 326, 14, 750, C.ink, "center");
-  t(ctx, "€ / an", 780, 342, 9.5, 500, C.mute, "center");
+  t(ctx, "—", 780, 326, 14, 750, C.ink, "center");
+  t(ctx, "Illustration", 780, 342, 9.5, 500, C.mute, "center");
   segs.forEach(([, col, l], i) => {
     rr(ctx, 850, 296 + i * 28, 10, 10, 3, col);
     t(ctx, l, 868, 301.5 + i * 28, 11, 550, C.sub);
   });
   card(ctx, 702, 424, 302, 188);
-  t(ctx, "Objectifs du trimestre", 722, 450, 14, 700);
+  t(ctx, "Indicateurs métier", 722, 450, 14, 700);
   const goals: [string, number, string][] = [["Chiffre d’affaires", 0.82, C.blue], ["Nouveaux clients", 0.64, C.violet], ["Satisfaction", 0.94, C.green]];
   goals.forEach(([l, p, col], i) => {
     const y = 486 + i * 39;
     t(ctx, l, 722, y, 11.5, 550, C.sub);
-    t(ctx, `${Math.round(p * 100)} %`, 984, y, 11.5, 700, C.ink, "right");
+    t(ctx, "—", 984, y, 11.5, 700, C.ink, "right");
     rr(ctx, 722, y + 13, 262, 7, 3.5, C.bg);
     rr(ctx, 722, y + 13, 262 * p, 7, 3.5, col);
   });
@@ -605,6 +605,7 @@ export const VIEW_COUNT = VIEW_FNS.length;
 export function buildView(i: number, scale: number): HTMLCanvasElement {
   const { c, ctx } = mk(1024, 640, scale);
   VIEW_FNS[i](ctx);
+  t(ctx, "Illustration des usages · Sans données réelles · Selon métier et formule", 594, 628, 10, 500, C.sub, "center");
   return c;
 }
 
@@ -640,8 +641,8 @@ function eventCard(ctx: Ctx, time: string, title: string, place: string, col: st
   t(ctx, time, 34, 28, 11.5, 650, col);
   t(ctx, title, 34, 52, 15, 700);
   t(ctx, place, 34, 73, 11.5, 400, C.sub);
-  avatar(ctx, 252, 48, 14, "CM", C.blue);
-  avatar(ctx, 272, 48, 14, "JD", C.violet);
+  avatar(ctx, 252, 48, 14, "EQ", C.blue);
+  avatar(ctx, 272, 48, 14, "OP", C.violet);
 }
 function docCard(ctx: Ctx, type: string, ref: string, client: string, amount: string, st: string, fg: string, bg: string, tfg: string, tbg: string) {
   card(ctx, 0, 0, 230, 290, 16, true);
@@ -670,27 +671,27 @@ function toast(ctx: Ctx, col: string, soft: string, title: string, sub: string, 
 
 export function buildFloaters(scale: number): Record<string, FloaterTex> {
   const o: Record<string, FloaterTex> = {};
-  o.toast0 = fc(330, 72, scale, (c) => toast(c, C.green, C.greenSoft, "Devis accepté", "Cabinet Lefèvre · +3 240 €", "maintenant"));
-  o.toast1 = fc(330, 72, scale, (c) => toast(c, C.blue, C.blueSoft, "Rendez-vous confirmé", "Atelier Moreau · 09:30", "il y a 2 min"));
-  o.toast2 = fc(330, 72, scale, (c) => toast(c, C.violet, C.violetSoft, "Facture payée", "F-1187 · 4 272,00 €", "il y a 8 min"));
+  o.toast0 = fc(330, 72, scale, (c) => toast(c, C.green, C.greenSoft, "Devis accepté", "Dossier commercial · —", "maintenant"));
+  o.toast1 = fc(330, 72, scale, (c) => toast(c, C.blue, C.blueSoft, "Rendez-vous confirmé", "Dossier client · 09:30", "il y a 2 min"));
+  o.toast2 = fc(330, 72, scale, (c) => toast(c, C.violet, C.violetSoft, "Facture payée", "Facture · —", "il y a 8 min"));
 
-  o.client0 = fc(300, 140, scale, (c) => clientCard(c, "AM", C.blue, "Atelier Moreau", "Artisan menuisier · Lyon", "Client actif", C.greenInk, C.greenSoft, "06 12 34 56 78"));
-  o.client1 = fc(300, 140, scale, (c) => clientCard(c, "CP", C.violet, "Clinique du Parc", "Santé & bien-être · Annecy", "Prospect", C.blue, C.blueSoft, "04 50 12 34 56"));
-  o.client2 = fc(300, 140, scale, (c) => clientCard(c, "CL", C.green, "Cabinet Lefèvre", "Conseil & gestion · Paris", "Client actif", C.greenInk, C.greenSoft, "01 42 00 11 22"));
+  o.client0 = fc(300, 140, scale, (c) => clientCard(c, "CL", C.blue, "Dossier client", "Fiche client", "Client actif", C.greenInk, C.greenSoft, "Coordonnées"));
+  o.client1 = fc(300, 140, scale, (c) => clientCard(c, "PR", C.violet, "Prospect", "Suivi commercial", "Prospect", C.blue, C.blueSoft, "Coordonnées"));
+  o.client2 = fc(300, 140, scale, (c) => clientCard(c, "DC", C.green, "Dossier commercial", "Documents liés", "Client actif", C.greenInk, C.greenSoft, "Coordonnées"));
 
-  o.event0 = fc(300, 96, scale, (c) => eventCard(c, "09:30 – 11:00", "Rendez-vous client", "Atelier Moreau · Visite de chantier", C.blue));
-  o.event1 = fc(300, 96, scale, (c) => eventCard(c, "14:00 – 15:30", "Intervention sur site", "Garage Delmas · Lyon 6e", C.green));
-  o.event2 = fc(300, 96, scale, (c) => eventCard(c, "16:30 – 17:15", "Réunion d’équipe", "Salle Horizon · 6 participants", C.amber));
+  o.event0 = fc(300, 96, scale, (c) => eventCard(c, "09:30 – 11:00", "Rendez-vous client", "Dossier client · Suivi de session", C.blue));
+  o.event1 = fc(300, 96, scale, (c) => eventCard(c, "14:00 – 15:30", "Intervention sur site", "Site d’intervention · Site client", C.green));
+  o.event2 = fc(300, 96, scale, (c) => eventCard(c, "16:30 – 17:15", "Réunion d’équipe", "Équipe affectée", C.amber));
 
-  o.doc0 = fc(230, 290, scale, (c) => docCard(c, "Devis", "D-2041", "Cabinet Lefèvre", "3 888,00 €", "À valider", C.amberInk, C.amberSoft, C.blue, C.blueSoft));
-  o.doc1 = fc(230, 290, scale, (c) => docCard(c, "Facture", "F-1187", "Atelier Moreau", "4 272,00 €", "Payée", C.greenInk, C.greenSoft, C.violet, C.violetSoft));
-  o.doc2 = fc(230, 290, scale, (c) => docCard(c, "Contrat", "C-0312", "Garage Delmas", "1 200,00 €", "À signer", C.blue, C.blueSoft, C.greenInk, C.greenSoft));
+  o.doc0 = fc(230, 290, scale, (c) => docCard(c, "Devis", "Devis", "Dossier commercial", "—", "À valider", C.amberInk, C.amberSoft, C.blue, C.blueSoft));
+  o.doc1 = fc(230, 290, scale, (c) => docCard(c, "Facture", "Facture", "Dossier client", "—", "Payée", C.greenInk, C.greenSoft, C.violet, C.violetSoft));
+  o.doc2 = fc(230, 290, scale, (c) => docCard(c, "Contrat", "Contrat", "Site d’intervention", "—", "À signer", C.blue, C.blueSoft, C.greenInk, C.greenSoft));
 
   o.kpiRev = fc(320, 170, scale, (c) => {
     card(c, 0, 0, 320, 170, 20, true);
     t(c, "Chiffre d’affaires", 22, 30, 12.5, 500, C.sub);
-    t(c, "48 920 €", 22, 66, 31, 800);
-    pill(c, "+12,4 %", 22 + tw(c, "48 920 €", 31, 800) + 12, 68, C.greenInk, C.greenSoft, 11);
+    t(c, "—", 22, 66, 31, 800);
+    pill(c, "—", 22 + tw(c, "—", 31, 800) + 12, 68, C.greenInk, C.greenSoft, 11);
     spark(c, [22, 28, 26, 34, 31, 40, 38, 47, 44, 53, 50, 60], 22, 100, 276, 50, C.blue, true, 2.6);
   });
   o.kpiGoal = fc(210, 210, scale, (c) => {
@@ -705,22 +706,22 @@ export function buildFloaters(scale: number): Record<string, FloaterTex> {
     c.strokeStyle = C.blue;
     c.lineCap = "round";
     c.stroke();
-    t(c, "82 %", 105, 92, 27, 800, C.ink, "center");
-    t(c, "Objectif du trimestre", 105, 178, 12, 550, C.sub, "center");
+    t(c, "—", 105, 92, 27, 800, C.ink, "center");
+    t(c, "Suivi de l’activité", 105, 178, 12, 550, C.sub, "center");
   });
   o.kpiSat = fc(250, 120, scale, (c) => {
     card(c, 0, 0, 250, 120, 20, true);
-    t(c, "Satisfaction clients", 20, 28, 12, 500, C.sub);
-    t(c, "4,8", 20, 66, 34, 800);
-    t(c, "/ 5", 20 + tw(c, "4,8", 34, 800) + 6, 74, 14, 500, C.mute);
+    t(c, "Évaluations formation", 20, 28, 12, 500, C.sub);
+    t(c, "—", 20, 66, 34, 800);
+    t(c, "", 20 + tw(c, "—", 34, 800) + 6, 74, 14, 500, C.mute);
     [0.95, 0.8, 0.9, 0.7, 1, 0.85].forEach((p, i) => rr(c, 150 + i * 14, 88 - 54 * p, 8, 54 * p, 4, i === 4 ? C.blue : "#b9d4ff"));
-    t(c, "126 avis", 20, 100, 11, 500, C.mute);
+    t(c, "Selon la formule", 20, 100, 11, 500, C.mute);
   });
   o.kpiTask = fc(280, 120, scale, (c) => {
     card(c, 0, 0, 280, 120, 20, true);
-    t(c, "Tâches terminées", 20, 28, 12, 500, C.sub);
-    t(c, "94 %", 20, 64, 30, 800);
-    t(c, "47 / 50 cette semaine", 260, 66, 11, 500, C.mute, "right");
+    t(c, "Actions coordonnées", 20, 28, 12, 500, C.sub);
+    t(c, "—", 20, 64, 30, 800);
+    t(c, "Planning et équipes", 260, 66, 11, 500, C.mute, "right");
     rr(c, 20, 90, 240, 8, 4, C.line);
     rr(c, 20, 90, 226, 8, 4, C.green);
   });
@@ -745,6 +746,7 @@ function mshell(ctx: Ctx, active: number, title: string, sub: string) {
   drawMark(ctx, 20, 16, 32, C.ink, C.blue);
   t(ctx, "NCR", 52, 33, 18, 800, C.ink);
   t(ctx, "Suite", 52 + tw(ctx, "NCR", 18, 800) + 5, 33, 18, 400, C.blue);
+  t(ctx, "ILLUSTRATION", 335, 32, 12, 600, C.sub, "right");
   rr(ctx, 356, 18, 34, 28, 14, C.bg);
   ctx.beginPath();
   ctx.arc(373, 32, 4, 0, Math.PI * 2);
@@ -754,7 +756,7 @@ function mshell(ctx: Ctx, active: number, title: string, sub: string) {
   ctx.arc(383, 24, 4, 0, Math.PI * 2);
   ctx.fillStyle = C.red;
   ctx.fill();
-  avatar(ctx, 430, 32, 17, "CM", C.blue);
+  avatar(ctx, 430, 32, 17, "EQ", C.blue);
   // titres
   t(ctx, title, 20, 98, 27, 750);
   t(ctx, sub, 20, 124, 14, 400, C.sub);
@@ -774,15 +776,15 @@ function mshell(ctx: Ctx, active: number, title: string, sub: string) {
 }
 
 function mDashboard(ctx: Ctx) {
-  mshell(ctx, 0, "Bonjour Camille", "Votre activité aujourd’hui");
+  mshell(ctx, 0, "Votre activité", "Votre activité aujourd’hui");
   card(ctx, 20, 144, 440, 130, 18);
   t(ctx, "Chiffre d’affaires", 40, 170, 14, 500, C.sub);
-  t(ctx, "48 920 €", 40, 206, 36, 800);
-  pill(ctx, "+12,4 %", 40 + tw(ctx, "48 920 €", 36, 800) + 14, 208, C.greenInk, C.greenSoft, 12);
+  t(ctx, "—", 40, 206, 36, 800);
+  pill(ctx, "—", 40 + tw(ctx, "—", 36, 800) + 14, 208, C.greenInk, C.greenSoft, 12);
   spark(ctx, [22, 28, 26, 34, 31, 40, 38, 47, 44, 53, 50, 60], 40, 228, 400, 34, C.blue, true, 3);
   const small: [string, string, string, string, string][] = [
-    ["Clients actifs", "1 284", "+38", C.blue, C.blueSoft],
-    ["Interventions", "86", "+9 %", C.violet, C.violetSoft],
+    ["Clients actifs", "—", "Suivi", C.blue, C.blueSoft],
+    ["Interventions", "—", "—", C.violet, C.violetSoft],
   ];
   small.forEach(([l, v, d, fg, bg], i) => {
     const x = 20 + i * 227;
@@ -794,10 +796,10 @@ function mDashboard(ctx: Ctx) {
     rr(ctx, x + 18, 372, 120 + i * 20, 5, 2.5, fg);
   });
   t(ctx, "Aujourd’hui", 22, 418, 16, 700);
-  pill(ctx, "4 tâches", 418, 418, C.blue, C.blueSoft, 11);
+  pill(ctx, "Suivi", 418, 418, C.blue, C.blueSoft, 11);
   const tasks: [string, string, string, string][] = [
-    ["09:30", "Rendez-vous Atelier Moreau", "Visite de chantier", C.blue],
-    ["11:00", "Validation devis D-2041", "Cabinet Lefèvre", C.violet],
+    ["09:30", "Rendez-vous client", "Suivi de session", C.blue],
+    ["11:00", "Validation du devis", "Dossier commercial", C.violet],
   ];
   tasks.forEach(([time, title, sub, col], i) => {
     const y = 436 + i * 50;
@@ -810,7 +812,7 @@ function mDashboard(ctx: Ctx) {
 }
 
 function mClients(ctx: Ctx) {
-  mshell(ctx, 1, "Clients", "1 284 clients · 38 nouveaux");
+  mshell(ctx, 1, "Clients", "Fiches et suivi client");
   rr(ctx, 20, 142, 440, 42, 21, "#fff", C.line);
   ctx.beginPath();
   ctx.arc(45, 162, 6, 0, Math.PI * 2);
@@ -827,11 +829,11 @@ function mClients(ctx: Ctx) {
   });
   card(ctx, 20, 240, 440, 288, 18);
   const rows: [string, string, string, string, string, string][] = [
-    ["Atelier Moreau", "Artisanat · hier", "Actif", "4 280 €", C.blue, "AM"],
-    ["Clinique du Parc", "Santé · il y a 2 j", "Prospect", "—", C.violet, "CP"],
-    ["Cabinet Lefèvre", "Conseil · aujourd’hui", "Actif", "12 640 €", C.green, "CL"],
-    ["Boulangerie Martin", "Commerce · il y a 3 j", "Actif", "1 920 €", C.amber, "BM"],
-    ["Résidence Horizon", "Immobilier · 1 sem.", "En attente", "7 350 €", "#0891b2", "RH"],
+    ["Dossier client", "Formation · hier", "Actif", "—", C.blue, "CL"],
+    ["Prospect", "Coiffure · il y a 2 j", "Prospect", "—", C.violet, "PR"],
+    ["Dossier commercial", "Sécurité · aujourd’hui", "Actif", "—", C.green, "DC"],
+    ["Client restauration", "Restauration · il y a 3 j", "Actif", "—", C.amber, "RE"],
+    ["Site client", "Nettoyage · 1 sem.", "En attente", "—", "#0891b2", "SI"],
   ];
   rows.forEach(([name, sub, st, amt, col, ini], i) => {
     const y = 240 + i * 57.6;
@@ -850,7 +852,7 @@ function mClients(ctx: Ctx) {
 }
 
 function mPlanning(ctx: Ctx) {
-  mshell(ctx, 2, "Mercredi 11 juin", "5 rendez-vous aujourd’hui");
+  mshell(ctx, 2, "Votre planning", "Planning adapté au métier");
   const days = ["L", "M", "M", "J", "V"];
   days.forEach((d, i) => {
     const cx = 64 + i * 88;
@@ -866,10 +868,10 @@ function mPlanning(ctx: Ctx) {
   ctx.fillStyle = C.line;
   ctx.fillRect(20, 224, 440, 1);
   const ev: [string, string, string, string, string, string][] = [
-    ["09:30", "Rendez-vous client", "Atelier Moreau · chantier", C.blue, C.blueSoft, C.blue],
-    ["11:00", "Signature de contrat", "Cabinet Lefèvre", C.violet, C.violetSoft, C.violet],
-    ["14:00", "Intervention sur site", "Garage Delmas · Lyon 6e", C.greenInk, C.greenSoft, C.green],
-    ["16:30", "Réunion d’équipe", "Salle Horizon · 6 pers.", C.amberInk, C.amberSoft, C.amber],
+    ["09:30", "Rendez-vous client", "Dossier client · session", C.blue, C.blueSoft, C.blue],
+    ["11:00", "Signature de contrat", "Dossier commercial", C.violet, C.violetSoft, C.violet],
+    ["14:00", "Intervention sur site", "Site d’intervention · Site client", C.greenInk, C.greenSoft, C.green],
+    ["16:30", "Réunion d’équipe", "Équipe affectée", C.amberInk, C.amberSoft, C.amber],
   ];
   ctx.fillStyle = C.line;
   ctx.fillRect(68, 244, 2, 272);
@@ -894,8 +896,8 @@ function mDocuments(ctx: Ctx) {
   mshell(ctx, 3, "Documents", "Devis, factures, contrats");
   card(ctx, 20, 142, 440, 104, 18);
   t(ctx, "Automatisation active", 40, 166, 14.5, 700);
-  pill(ctx, "4 étapes", 418, 166, C.greenInk, C.greenSoft, 11);
-  const steps = ["Devis", "Accepté", "Facture", "Relance"];
+  pill(ctx, "Parcours", 418, 166, C.greenInk, C.greenSoft, 11);
+  const steps = ["Devis", "Accepté", "Facture", "Suivi"];
   steps.forEach((s, i) => {
     const cx = 62 + i * 119;
     if (i < 3) {
@@ -911,10 +913,10 @@ function mDocuments(ctx: Ctx) {
   });
   card(ctx, 20, 262, 440, 266, 18);
   const docs: [string, string, string, string, string, string][] = [
-    ["Devis D-2041", "Cabinet Lefèvre", "3 888 €", "À valider", C.amberInk, C.amberSoft],
-    ["Facture F-1187", "Atelier Moreau", "4 272 €", "Payée", C.greenInk, C.greenSoft],
-    ["Contrat C-0312", "Garage Delmas", "1 200 €", "À signer", C.blue, C.blueSoft],
-    ["Facture F-1186", "Académie Nova", "2 160 €", "Envoyée", C.violet, C.violetSoft],
+    ["Devis client", "Dossier commercial", "—", "À valider", C.amberInk, C.amberSoft],
+    ["Facture client", "Dossier client", "—", "Payée", C.greenInk, C.greenSoft],
+    ["Contrat client", "Site d’intervention", "—", "À signer", C.blue, C.blueSoft],
+    ["Facture client", "Organisme formation", "—", "Envoyée", C.violet, C.violetSoft],
   ];
   docs.forEach(([n, c, amt, st, fg, bg], i) => {
     const y = 262 + i * 66.5;
@@ -937,9 +939,9 @@ function mDocuments(ctx: Ctx) {
 function mPilot(ctx: Ctx) {
   mshell(ctx, 4, "Pilotage", "Vue annuelle de l’entreprise");
   card(ctx, 20, 142, 440, 206, 18);
-  t(ctx, "Revenus mensuels", 40, 166, 14, 500, C.sub);
-  t(ctx, "412 600 €", 40, 198, 30, 800);
-  pill(ctx, "+7,8 %", 40 + tw(ctx, "412 600 €", 30, 800) + 12, 200, C.greenInk, C.greenSoft, 12);
+  t(ctx, "Indicateurs d’activité", 40, 166, 14, 500, C.sub);
+  t(ctx, "—", 40, 198, 30, 800);
+  pill(ctx, "—", 40 + tw(ctx, "—", 30, 800) + 12, 200, C.greenInk, C.greenSoft, 12);
   const vals = [38, 44, 41, 52, 49, 58, 55, 63, 60, 71, 68, 82];
   const bx = 40, by = 226, bw = 400, bh = 96;
   vals.forEach((v, i) => {
@@ -967,15 +969,15 @@ function mPilot(ctx: Ctx) {
   ctx.strokeStyle = C.blue;
   ctx.lineCap = "round";
   ctx.stroke();
-  t(ctx, "82 %", 126, 428, 23, 800, C.ink, "center");
-  t(ctx, "Objectif du trimestre", 126, 500, 12.5, 550, C.sub, "center");
+  t(ctx, "—", 126, 428, 23, 800, C.ink, "center");
+  t(ctx, "Suivi de l’activité", 126, 500, 12.5, 550, C.sub, "center");
   // indicateurs
   card(ctx, 247, 364, 213, 164, 18);
-  t(ctx, "Marge nette", 265, 388, 13, 500, C.sub);
-  t(ctx, "23,4 %", 265, 420, 28, 800);
-  pill(ctx, "+1,2 pt", 265, 452, C.greenInk, C.greenSoft, 11);
-  t(ctx, "Recouvrement", 265, 484, 12.5, 550, C.sub);
-  t(ctx, "96 %", 442, 484, 12.5, 700, C.ink, "right");
+  t(ctx, "Qualité", 265, 388, 13, 500, C.sub);
+  t(ctx, "—", 265, 420, 28, 800);
+  pill(ctx, "Suivi", 265, 452, C.greenInk, C.greenSoft, 11);
+  t(ctx, "Documents liés", 265, 484, 12.5, 550, C.sub);
+  t(ctx, "—", 442, 484, 12.5, 700, C.ink, "right");
   rr(ctx, 265, 498, 177, 7, 3.5, C.bg);
   rr(ctx, 265, 498, 177 * 0.96, 7, 3.5, C.blue);
 }

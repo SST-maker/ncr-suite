@@ -3,7 +3,7 @@ import { ArrowRight, Globe } from "lucide-react";
 import { FinalScene } from "../three/FinalScene";
 import { clamp } from "../three/common";
 import { LogoMark } from "./Logo";
-import { SITE_URL } from "../data";
+import { TRIAL_URL, CONTACT_URL } from "../data";
 import { useReveal } from "./useReveal";
 
 interface Props {
@@ -75,19 +75,19 @@ export default function Final({ effects, views, onFail }: Props) {
           gestion plus simple.
         </h2>
         <p data-reveal data-delay="0.08" className="mt-5 max-w-xl text-[1.05rem] leading-relaxed text-slate-400">
-          Une suite. Tous vos métiers. Une seule plateforme.
+          Présentez votre activité. Après validation, découvrez la formule Professionnelle pendant 7 jours, sans carte bancaire.
         </p>
         <div data-reveal data-delay="0.14" className="mt-9 flex w-full flex-col items-center gap-6">
-          <a href={SITE_URL} className="btn btn-light !h-14 !px-8 !text-base">
-            Découvrir NCR Suite
+          <a href={TRIAL_URL} className="btn btn-light !h-14 !px-8 !text-base">
+            Demander mon essai gratuit
             <ArrowRight size={18} aria-hidden="true" />
           </a>
           <a
-            href={SITE_URL}
+            href={CONTACT_URL}
             className="group inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/5 px-6 py-3 text-[clamp(1.25rem,3vw,1.75rem)] font-semibold tracking-tight text-white backdrop-blur transition hover:border-white/25 hover:bg-white/10"
           >
             <Globe size={22} className="text-[#6aa5ff]" aria-hidden="true" />
-            ncr-suite.fr
+            contact@ncr-suite.fr
           </a>
         </div>
       </div>

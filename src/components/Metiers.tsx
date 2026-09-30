@@ -1,15 +1,10 @@
 import { useRef } from "react";
-import { ArrowUpRight, Briefcase, Building2, GraduationCap, HardHat, HeartPulse, Store } from "lucide-react";
-import { SECTORS } from "../data";
+import { ArrowUpRight, GraduationCap, ShieldCheck, Sparkles, Utensils, Scissors } from "lucide-react";
+import { SECTORS, SITE_URL } from "../data";
 import { useReveal } from "./useReveal";
 
-const ICONS: Record<string, typeof HardHat> = {
-  hardhat: HardHat,
-  heart: HeartPulse,
-  briefcase: Briefcase,
-  store: Store,
-  building: Building2,
-  graduation: GraduationCap,
+const ICONS: Record<string, typeof GraduationCap> = {
+  graduation: GraduationCap, shield: ShieldCheck, sparkles: Sparkles, utensils: Utensils, scissors: Scissors,
 };
 
 function TiltCard({ s }: { s: (typeof SECTORS)[number] }) {
@@ -17,7 +12,7 @@ function TiltCard({ s }: { s: (typeof SECTORS)[number] }) {
   const Icon = ICONS[s.icon];
 
   const move = (e: React.PointerEvent<HTMLElement>) => {
-    if (e.pointerType !== "mouse") return;
+    if (e.pointerType !== "mouse" || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const el = ref.current;
     if (!el) return;
     const r = el.getBoundingClientRect();
@@ -42,9 +37,6 @@ function TiltCard({ s }: { s: (typeof SECTORS)[number] }) {
       ref={ref}
       onPointerMove={move}
       onPointerLeave={leave}
-      tabIndex={0}
-      onFocus={() => ref.current?.style.setProperty("--rx", "-3deg")}
-      onBlur={leave}
       className="tilt group relative flex min-h-[19rem] flex-col overflow-hidden rounded-[1.75rem] border border-slate-200/80 bg-white p-7 shadow-[0_1px_2px_rgba(16,24,40,0.04),0_18px_40px_-24px_rgba(16,24,40,0.18)] hover:shadow-[0_2px_4px_rgba(16,24,40,0.05),0_40px_70px_-28px_rgba(16,24,40,0.3)]"
       style={{ ["--accent" as string]: s.accent }}
     >
@@ -84,12 +76,14 @@ function TiltCard({ s }: { s: (typeof SECTORS)[number] }) {
             </li>
           ))}
         </ul>
-        <span
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500 transition-all duration-300 group-hover:border-transparent group-hover:bg-(--c) group-hover:text-white"
+        <a
+          href={`${SITE_URL}${s.path}`}
+          aria-label={`Découvrir NCR Suite ${s.title}`}
+          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500 transition-all duration-300 group-hover:border-transparent group-hover:bg-(--c) group-hover:text-white"
           style={{ ["--c" as string]: s.accent }}
         >
           <ArrowUpRight size={17} aria-hidden="true" className="transition-transform duration-300 group-hover:rotate-12" />
-        </span>
+        </a>
       </div>
     </article>
   );
@@ -106,11 +100,11 @@ export default function Metiers() {
             Métiers
           </p>
           <h2 id="metiers-title" data-reveal data-delay="0.05" className="mt-4 text-[clamp(2rem,4.6vw,3.75rem)] font-semibold leading-[1.05] tracking-[-0.035em]">
-            Une plateforme, tous vos métiers.
+            Cinq métiers. Un même socle.
           </h2>
           <p data-reveal data-delay="0.1" className="mt-5 text-[1.05rem] leading-relaxed text-slate-600 lg:text-lg">
             NCR Suite s’adapte à votre secteur : une base solide et commune, des modules qui épousent vos pratiques, vos
-            documents et votre vocabulaire.
+            documents et votre vocabulaire. Les fonctions disponibles dépendent de votre formule et des modules activés.
           </p>
         </div>
         <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:mt-20 lg:grid-cols-3 lg:gap-6">

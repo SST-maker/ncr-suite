@@ -1,5 +1,13 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: "Inter";
+  src: url("/fonts/inter-variable.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --color-brand: #0a6cff;
@@ -154,4 +162,15 @@ body {
 @keyframes cue {
   0% { transform: translateY(-100%); }
   100% { transform: translateY(300%); }
+}
+
+/* A hidden tab panel must remain hidden despite utility display classes. */
+[hidden] { display: none !important; }
+button, a, summary { -webkit-tap-highlight-color: transparent; }
+button, select { cursor: pointer; }
+@media (prefers-reduced-motion: reduce) {
+  .tilt, .tilt.is-moving { transform: none !important; }
+}
+@media (max-width: 380px) {
+  header .btn { padding-inline: 0.75rem !important; }
 }

@@ -40,7 +40,7 @@ export default function Produit({ images }: { images: string[] | null }) {
   useEffect(() => () => ScrollTrigger.refresh(), []);
 
   const onMove = (e: React.PointerEvent) => {
-    if (e.pointerType !== "mouse" || !tiltRef.current) return;
+    if (e.pointerType !== "mouse" || window.matchMedia("(prefers-reduced-motion: reduce)").matches || !tiltRef.current) return;
     const r = e.currentTarget.getBoundingClientRect();
     const x = (e.clientX - r.left) / r.width - 0.5;
     const y = (e.clientY - r.top) / r.height - 0.5;
@@ -51,8 +51,11 @@ export default function Produit({ images }: { images: string[] | null }) {
   };
 
   const onKey = (e: React.KeyboardEvent) => {
-    if (e.key === "ArrowRight") setActive((a) => (a + 1) % PANELS.length);
-    if (e.key === "ArrowLeft") setActive((a) => (a - 1 + PANELS.length) % PANELS.length);
+    if (!["ArrowRight", "ArrowLeft", "Home", "End"].includes(e.key)) return;
+    e.preventDefault();
+    const next = e.key === "Home" ? 0 : e.key === "End" ? PANELS.length - 1 : (active + (e.key === "ArrowRight" ? 1 : -1) + PANELS.length) % PANELS.length;
+    setActive(next);
+    document.getElementById(`tab-${next}`)?.focus();
   };
 
   return (
@@ -69,11 +72,10 @@ export default function Produit({ images }: { images: string[] | null }) {
             Produit
           </p>
           <h2 id="produit-title" data-reveal data-delay="0.05" className="mt-4 text-[clamp(2rem,4.6vw,3.75rem)] font-semibold leading-[1.05] tracking-[-0.035em]">
-            Des interfaces pensées pour le travail réel.
+            Le travail prend forme.
           </h2>
           <p data-reveal data-delay="0.1" className="mt-5 text-[1.05rem] leading-relaxed text-slate-400 lg:text-lg">
-            Lisibles, rapides, cohérentes. Chaque écran de NCR Suite est conçu pour aller à l’essentiel et vous faire gagner
-            du temps, tous les jours.
+            Gestion, clients, planning, documents et pilotage : explorez les usages reliés par NCR Suite. Ces interfaces sont des illustrations, sans données réelles ; leur présentation et leurs fonctions varient selon le métier et la formule.
           </p>
         </div>
       </div>
@@ -110,7 +112,7 @@ export default function Produit({ images }: { images: string[] | null }) {
                     {images ? (
                       <img
                         src={images[i]}
-                        alt={`Interface NCR Suite — ${p.title}`}
+                        alt={`Illustration des usages NCR Suite — ${p.title}, sans données réelles`}
                         loading="lazy"
                         draggable={false}
                         className="block aspect-[1.6] w-full rounded-[0.8rem] sm:rounded-[1.05rem]"
