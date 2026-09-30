@@ -2,7 +2,7 @@
 
 Ce projet est une application React/Vite : les fichiers `src/*.tsx` ne doivent pas être servis directement par GitHub Pages.
 
-## Méthode recommandée 
+## Méthode recommandée
 
 1. Déposer tout le contenu de ce dossier à la racine du dépôt GitHub.
 2. Vérifier que la branche principale s'appelle `main`.
