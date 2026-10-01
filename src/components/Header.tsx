@@ -4,8 +4,8 @@ import { Logo } from "./Logo";
 import { TRIAL_URL, LOGIN_URL } from "../data";
 
 const NAV = [
-  { href: "#plateforme", label: "Plateforme" },
-  { href: "#metiers", label: "Métiers" },
+  { href: "#plateforme", label: "Univers" },
+  { href: "#socle", label: "Socle" },
   { href: "#produit", label: "Produit" },
   { href: "#offres", label: "Offres" },
   { href: "#faq", label: "FAQ" },

@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { RoundedBoxGeometry } from "three/examples/jsm/geometries/RoundedBoxGeometry.js";
+import { VERTICALS } from "../verticals";
 import { buildFloaters } from "./ui";
 import { applyPixelRatio, canvasTexture, clamp, createRenderer, disposeScene, lerp, radialTexture, sstep } from "./common";
 
@@ -39,30 +40,18 @@ interface FloaterDef {
   delay: number;
 }
 const PX = 256; // pixels logiques par unité monde
-const FLOATERS: FloaterDef[] = [
-  { stage: 1, key: "toast0", to: [-0.85, 0.95, 0.55], rot: [0, 0.06, 0], delay: 0 },
-  { stage: 1, key: "toast1", to: [1.2, 0.3, 0.95], rot: [0, -0.08, 0], delay: 1 },
-  { stage: 1, key: "toast2", to: [-1.25, -0.85, 0.75], rot: [0, 0.08, 0], delay: 2 },
-  { stage: 2, key: "client0", to: [-1.05, 0.55, 0.7], rot: [0, 0.1, 0.02], delay: 0 },
-  { stage: 2, key: "client1", to: [0.95, -0.05, 1.2], rot: [0, -0.1, -0.02], delay: 1 },
-  { stage: 2, key: "client2", to: [-0.55, -0.8, 1.6], rot: [0, 0.06, 0.02], delay: 2 },
-  { stage: 3, key: "event0", to: [-0.85, 0.7, 0.6], rot: [0, 0.1, 0], delay: 0 },
-  { stage: 3, key: "event1", to: [1.05, 0.05, 1.05], rot: [0, -0.1, 0], delay: 1 },
-  { stage: 3, key: "event2", to: [-0.55, -0.78, 1.45], rot: [0, 0.08, 0], delay: 2 },
-  { stage: 4, key: "doc0", to: [-1.2, 0.1, 0.6], rot: [0, 0.12, 0.1], delay: 0 },
-  { stage: 4, key: "doc1", to: [0.05, 0.0, 1.15], rot: [0, 0, 0], delay: 1 },
-  { stage: 4, key: "doc2", to: [1.3, -0.05, 1.7], rot: [0, -0.12, -0.1], delay: 2 },
-  { stage: 5, key: "kpiRev", to: [-1.15, 0.75, 0.7], rot: [0, 0.12, 0], delay: 0 },
-  { stage: 5, key: "kpiGoal", to: [1.4, 0.45, 1.25], rot: [0, -0.15, 0], delay: 1 },
-  { stage: 5, key: "kpiSat", to: [1.0, -0.88, 0.9], rot: [0, -0.1, 0], delay: 2 },
-  { stage: 5, key: "kpiTask", to: [-1.0, -0.88, 1.45], rot: [0, 0.1, 0], delay: 3 },
-];
+const FLOATERS: FloaterDef[] = VERTICALS.flatMap((_, i) => [
+  { stage: i + 1, key: `vertical-${i}-0`, to: [-0.9, 0.8, 0.65] as V3, rot: [0, 0.08, 0] as V3, delay: 0 },
+  { stage: i + 1, key: `vertical-${i}-1`, to: [0.95, 0.05, 1.1] as V3, rot: [0, -0.1, 0] as V3, delay: 1 },
+  { stage: i + 1, key: `vertical-${i}-2`, to: [-0.55, -0.8, 1.45] as V3, rot: [0, 0.08, 0] as V3, delay: 2 },
+]);
 
 export interface StoryOptions {
   canvas: HTMLCanvasElement;
   views: HTMLCanvasElement[];
   mobile: boolean;
   getProgress: () => number;
+  getHeroView: () => number;
   getHeroBottom?: () => number;
   onFrame: (s: number) => void;
 }
@@ -80,6 +69,8 @@ export class StoryScene {
   private scene = new THREE.Scene();
   private camera = new THREE.PerspectiveCamera(32, 1, 1, 80);
   private device = new THREE.Group();
+  private screenProgress = 0;
+  private accentColor = new THREE.Color();
   private overlays: THREE.MeshBasicMaterial[] = [];
   private floaters: FloaterRuntime[] = [];
   private shadow!: THREE.Mesh;
@@ -144,9 +135,9 @@ export class StoryScene {
 
     // halo doux derrière l'appareil
     const haloTex = radialTexture([
-      [0, "rgba(10,108,255,0.22)"],
-      [0.5, "rgba(10,108,255,0.07)"],
-      [1, "rgba(10,108,255,0)"],
+      [0, "rgba(255,255,255,0.22)"],
+      [0.5, "rgba(255,255,255,0.07)"],
+      [1, "rgba(255,255,255,0)"],
     ]);
     this.halo = new THREE.Mesh(
       new THREE.PlaneGeometry(14, 14),
@@ -376,10 +367,15 @@ export class StoryScene {
     (this.shadow.material as THREE.MeshBasicMaterial).opacity = 0.9 - bob * 2;
 
     // vues : fondu enchaîné cumulatif
+    const screenTarget = s < 0.45 ? this.o.getHeroView() : s;
+    this.screenProgress += (screenTarget - this.screenProgress) * (1 - Math.exp(-dt * 9));
     this.overlays.forEach((m, k) => {
-      const c = k + 2;
-      m.opacity = sstep(c - 0.6, c - 0.4, s);
+      const chapter = k + 1;
+      m.opacity = sstep(chapter - 0.6, chapter - 0.4, this.screenProgress);
     });
+    const colorIndex = s < 0.45 ? this.o.getHeroView() - 1 : Math.round(s) - 1;
+    const accent = this.accentColor.set(VERTICALS[colorIndex]?.accent ?? "#61728c");
+    (this.halo.material as THREE.MeshBasicMaterial).color.lerp(accent, 1 - Math.exp(-dt * 4));
 
     // cartes : séparation en couches
     for (const f of this.floaters) {

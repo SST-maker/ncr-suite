@@ -1,13 +1,15 @@
 import { useEffect, useRef, useState } from "react";
+import { VERTICALS, verticalStyle } from "../verticals";
 import { PANELS } from "../data";
 import { gsap, ScrollTrigger, useReveal } from "./useReveal";
 
-export default function Produit({ images }: { images: string[] | null }) {
+export default function Produit({ images, activeVertical, onSelect }: { images: string[] | null; activeVertical: number; onSelect: (index: number) => void }) {
   const ref = useRef<HTMLElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const tiltRef = useRef<HTMLDivElement>(null);
   const innerRef = useRef<HTMLDivElement>(null);
-  const [active, setActive] = useState(0);
+  const active = activeVertical + 1;
+  const setActive = (index: number) => onSelect(index - 1);
   const [narrow, setNarrow] = useState(false);
   useReveal(ref);
 
@@ -64,7 +66,7 @@ export default function Produit({ images }: { images: string[] | null }) {
       ref={ref}
       aria-labelledby="produit-title"
       className="relative overflow-hidden bg-night py-24 text-white lg:py-36"
-      style={{ background: "radial-gradient(1200px 600px at 50% 0%, #0f2247 0%, #05070c 60%)" }}
+      style={{ ...verticalStyle(activeVertical), background: "radial-gradient(1200px 600px at 50% 0%, var(--vertical-glow) 0%, #05070c 60%), #05070c" }}
     >
       <div className="mx-auto w-[min(92vw,1180px)]">
         <div className="mx-auto max-w-3xl text-center">
@@ -72,10 +74,10 @@ export default function Produit({ images }: { images: string[] | null }) {
             Produit
           </p>
           <h2 id="produit-title" data-reveal data-delay="0.05" className="mt-4 text-[clamp(2rem,4.6vw,3.75rem)] font-semibold leading-[1.05] tracking-[-0.035em]">
-            Le travail prend forme.
+            Un même ADN. Des outils qui changent.
           </h2>
           <p data-reveal data-delay="0.1" className="mt-5 text-[1.05rem] leading-relaxed text-slate-400 lg:text-lg">
-            Gestion, clients, planning, documents et pilotage : explorez les usages reliés par NCR Suite. Ces interfaces sont des illustrations, sans données réelles ; leur présentation et leurs fonctions varient selon le métier et la formule.
+            Un planning de vacations ne ressemble pas à un agenda de salon. Explorez cinq environnements avec leurs priorités, leurs écrans et leur vocabulaire. Mockups illustratifs ; fonctions selon l’offre et les modules.
           </p>
         </div>
       </div>
@@ -85,7 +87,7 @@ export default function Produit({ images }: { images: string[] | null }) {
         ref={stageRef}
         onPointerMove={onMove}
         onPointerLeave={onLeave}
-        className="relative mx-auto mt-14 h-[min(54vw,620px)] min-h-[230px] w-full max-w-[1500px] lg:mt-20"
+        className="relative mx-auto mt-14 h-[min(54vw,620px)] max-[819px]:h-[min(104vw,600px)] min-h-[230px] w-full max-w-[1500px] lg:mt-20"
         style={{ perspective: "1800px" }}
       >
         <div ref={tiltRef} className="absolute inset-0 transition-transform duration-500 ease-out" style={{ transformStyle: "preserve-3d" }}>
@@ -97,7 +99,7 @@ export default function Produit({ images }: { images: string[] | null }) {
                 <figure
                   key={p.title}
                   onClick={() => setActive(i)}
-                  className={`absolute left-1/2 top-0 m-0 w-[min(84vw,880px)] ${a ? "cursor-pointer" : ""}`}
+                  className={`absolute left-1/2 top-0 m-0 w-[min(84vw,880px)] max-[819px]:w-[min(82vw,480px)] ${a ? "cursor-pointer" : ""}`}
                   style={{
                     transform: `translate3d(calc(-50% + ${off * (narrow ? 40 : 54)}%), ${a * 2.5}%, ${-a * 240}px) rotateY(${-off * (narrow ? 18 : 26)}deg)`,
                     opacity: a > 2 ? 0 : 1 - a * 0.32,
@@ -115,10 +117,10 @@ export default function Produit({ images }: { images: string[] | null }) {
                         alt={`Illustration des usages NCR Suite — ${p.title}, sans données réelles`}
                         loading="lazy"
                         draggable={false}
-                        className="block aspect-[1.6] w-full rounded-[0.8rem] sm:rounded-[1.05rem]"
+                        className="block aspect-[4/5] min-[820px]:aspect-[1.6] w-full rounded-[0.8rem] sm:rounded-[1.05rem]"
                       />
                     ) : (
-                      <div className="aspect-[1.6] w-full rounded-xl bg-slate-800" />
+                      <div className="aspect-[4/5] min-[820px]:aspect-[1.6] w-full rounded-xl bg-slate-800" />
                     )}
                     <div
                       aria-hidden="true"
@@ -149,6 +151,7 @@ export default function Produit({ images }: { images: string[] | null }) {
               aria-controls="panel-caption"
               tabIndex={active === i ? 0 : -1}
               onClick={() => setActive(i)}
+              style={active === i ? { background: VERTICALS[i - 1]?.soft ?? "#fff", color: VERTICALS[i - 1]?.accent ?? "#25344b" } : undefined}
               className={`rounded-full px-4 py-2 text-[0.88rem] font-medium transition ${
                 active === i ? "bg-white text-ink shadow-lg" : "bg-white/5 text-slate-300 ring-1 ring-white/10 hover:bg-white/10"
               }`}
@@ -160,6 +163,7 @@ export default function Produit({ images }: { images: string[] | null }) {
         <div id="panel-caption" role="tabpanel" aria-labelledby={`tab-${active}`} aria-live="polite" className="mt-7 min-h-[4.5rem]">
           <h3 className="text-xl font-semibold tracking-tight">{PANELS[active].title}</h3>
           <p className="mx-auto mt-2 max-w-xl text-slate-400">{PANELS[active].text}</p>
+          {activeVertical >= 0 && <ul className="mt-5 flex flex-wrap justify-center gap-2">{VERTICALS[activeVertical].features.map(f => <li key={f} className="rounded-full border border-white/15 px-3 py-2 text-xs text-slate-200">{f}</li>)}</ul>}
         </div>
       </div>
     </section>

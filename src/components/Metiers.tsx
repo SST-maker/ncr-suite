@@ -97,10 +97,10 @@ export default function Metiers() {
       <div className="mx-auto w-[min(92vw,1180px)]">
         <div className="mx-auto max-w-3xl text-center">
           <p className="eyebrow" data-reveal>
-            Métiers
+            Fonctions par métier
           </p>
           <h2 id="metiers-title" data-reveal data-delay="0.05" className="mt-4 text-[clamp(2rem,4.6vw,3.75rem)] font-semibold leading-[1.05] tracking-[-0.035em]">
-            Cinq métiers. Un même socle.
+            Les outils de votre quotidien.
           </h2>
           <p data-reveal data-delay="0.1" className="mt-5 text-[1.05rem] leading-relaxed text-slate-600 lg:text-lg">
             NCR Suite s’adapte à votre secteur : une base solide et commune, des modules qui épousent vos pratiques, vos

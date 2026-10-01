@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import Header from "./components/Header";
 import Story from "./components/Story";
+import Socle from "./components/Socle";
 import Metiers from "./components/Metiers";
 import Produit from "./components/Produit";
 import Avantages from "./components/Avantages";
@@ -48,8 +49,9 @@ const toUrl = (c: HTMLCanvasElement) =>
 export default function App() {
   const [effects, setEffects] = useState(() => {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    return !reduced && graphics.available && !(window.innerHeight < 540 && window.innerWidth < 1024);
+    return !reduced && graphics.available && !((window.innerHeight < 540 && window.innerWidth < 1024) || (window.innerHeight < 700 && window.innerWidth < 640));
   });
+  const [activeVertical, setActiveVertical] = useState(-1);
   const [assets, setAssets] = useState<Assets | null>(null);
   const [compact, setCompact] = useState(() => isCompact());
 
@@ -64,7 +66,7 @@ export default function App() {
   useEffect(() => {
     const on = () => {
       setCompact(isCompact());
-      if (window.innerHeight < 540 && window.innerWidth < 1024) setEffects(false);
+      if ((window.innerHeight < 540 && window.innerWidth < 1024) || (window.innerHeight < 700 && window.innerWidth < 640)) setEffects(false);
     };
     window.addEventListener("resize", on);
     return () => window.removeEventListener("resize", on);
@@ -104,12 +106,9 @@ export default function App() {
           if (cancelled) return;
         }
         setAssets({ views, images: null });
-        // images du site (galerie, version statique) : format bureau, générées une à une puis libérées
-        const images: string[] = [];
-        for (let i = 0; i < VIEW_COUNT; i++) {
-          images.push(await imageUrl(buildView(i, 1.75)));
-          if (cancelled) return;
-        }
+        // Reuse the portrait canvases on small screens, including the static fallback.
+        const images = await Promise.all(views.map(imageUrl));
+        if (cancelled) return;
         setAssets({ views, images });
       } else {
         const scale = desktopScale();
@@ -136,11 +135,12 @@ export default function App() {
     <>
       <Header effects={effects} onToggle={() => setEffects((v) => !v)} />
       <main id="contenu">
-        <Story effects={effects} views={assets?.views ?? null} images={assets?.images ?? null} onFail={fail} />
+        <Story activeVertical={activeVertical} onSelect={setActiveVertical} effects={effects} views={assets?.views ?? null} images={assets?.images ?? null} onFail={fail} />
+        <Socle />
         <Metiers />
-        <Produit images={assets?.images ?? null} />
+        <Produit activeVertical={activeVertical} onSelect={setActiveVertical} images={assets?.images ?? null} />
         <Avantages />
-        <Offres />
+        <Offres activeVertical={activeVertical} onSelect={setActiveVertical} />
         <Faq />
         <Final effects={effects} views={assets?.views ?? null} onFail={fail} />
       </main>

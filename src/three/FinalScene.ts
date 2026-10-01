@@ -241,9 +241,9 @@ export class FinalScene {
     scene.add(this.dust);
 
     // interfaces en arrière-plan (profondeur cinématographique)
-    const angles = mobile ? [-0.75, 0.75] : [-1.15, -0.62, 0.62, 1.15];
+    const angles = mobile ? [-0.75, 0.75] : [-1.25, -0.72, 0, 0.72, 1.25];
     angles.forEach((th, i) => {
-      const cv = this.o.views[(i * 2 + 1) % this.o.views.length];
+      const cv = this.o.views[mobile ? 0 : (i + 1) % this.o.views.length];
       const m = new THREE.Mesh(
         new THREE.PlaneGeometry((4 * cv.width) / cv.height, 4),
         new THREE.MeshBasicMaterial({
