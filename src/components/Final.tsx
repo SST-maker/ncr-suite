@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { ArrowRight, Globe } from "lucide-react";
 import { FinalScene } from "../three/FinalScene";
-import { clamp } from "../three/common";
+import { scrollGeometry } from "../three/scrollGeometry";
 import { LogoMark } from "./Logo";
 import { TRIAL_URL, CONTACT_URL } from "../data";
 import { useReveal } from "./useReveal";
@@ -21,27 +21,18 @@ export default function Final({ effects, views, onFail }: Props) {
     if (!effects || !views || !canvasRef.current || !secRef.current) return;
     const sec = secRef.current;
     let scene: FinalScene | null = null;
-    try {
-      scene = new FinalScene({
-        canvas: canvasRef.current,
-        views,
-        mobile: window.innerWidth < 1024,
-        getProgress: () => {
-          const r = sec.getBoundingClientRect();
-          return clamp((window.innerHeight - r.top) / Math.max(1, r.height), 0, 1);
-        },
-      });
-    } catch (e) {
-      console.warn("WebGL indisponible pour la scène finale.", e);
-      onFail();
-      return;
-    }
-    const io = new IntersectionObserver(([e]) => scene?.setActive(e.isIntersecting), { rootMargin: "120px" });
+    const geometry = scrollGeometry(sec);
+    const io = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting && !scene) {
+        try {
+          scene = new FinalScene({ canvas: canvasRef.current!, views, mobile: window.innerWidth < 1024, getProgress: geometry.final });
+        } catch (e) { console.warn("WebGL indisponible pour la scène finale.", e); onFail(); }
+      }
+      scene?.setActive(entry.isIntersecting);
+    }, { rootMargin: "120px" });
     io.observe(sec);
-    return () => {
-      io.disconnect();
-      scene?.dispose();
-    };
+    return () => { io.disconnect(); geometry.dispose(); scene?.dispose(); };
+
   }, [effects, views, onFail]);
 
   return (

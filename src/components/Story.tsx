@@ -1,8 +1,9 @@
+import { scrollGeometry } from "../three/scrollGeometry";
 import { useEffect, useRef } from "react";
 import { ArrowRight, Check } from "lucide-react";
 import { CHAPTERS, TRIAL_URL } from "../data";
 import { StoryScene } from "../three/StoryScene";
-import { clamp, sstep } from "../three/common";
+import { sstep } from "../three/common";
 import VerticalSelector from "./VerticalSelector";
 import { VERTICALS, verticalStyle } from "../verticals";
 import { gsap } from "./useReveal";
@@ -90,7 +91,11 @@ export default function Story({ activeVertical, onSelect, effects, views, images
   useEffect(() => {
     if (!effects || !views || !canvasRef.current || !secRef.current) return;
     const sec = secRef.current;
+    const geometry = scrollGeometry(sec);
+    let lastFrame = -1;
     const update = (s: number) => {
+      if (Math.abs(lastFrame - s) < 0.0001) return;
+      lastFrame = s;
       blocks.current.forEach((el, i) => {
         if (!el) return;
         const op = i === 0 ? 1 - sstep(0.1, 0.4, s) : 1 - sstep(0.2, 0.42, Math.abs(s - i));
@@ -129,14 +134,12 @@ export default function Story({ activeVertical, onSelect, effects, views, images
           const par = el?.parentElement as HTMLElement | null;
           return el && par ? par.offsetTop + el.offsetTop + el.offsetHeight : 0;
         },
-        getProgress: () => {
-          const r = sec.getBoundingClientRect();
-          return clamp(-r.top / Math.max(1, r.height - window.innerHeight), 0, 1);
-        },
+        getProgress: geometry.story,
         onFrame: update,
       });
     } catch (e) {
       console.warn("WebGL indisponible, version statique activée.", e);
+      geometry.dispose();
       onFail();
       return;
     }
@@ -160,6 +163,7 @@ export default function Story({ activeVertical, onSelect, effects, views, images
       : null;
     return () => {
       cancelAnimationFrame(raf);
+      geometry.dispose();
       intro?.kill();
       io.disconnect();
       scene?.dispose();

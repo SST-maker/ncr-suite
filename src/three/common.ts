@@ -11,8 +11,8 @@ export const sstep = (a: number, b: number, x: number) => {
 /** Définition de rendu : pleine densité de pixels de l'appareil (iPhone ×3), plafonnée par un budget de pixels. */
 export function applyPixelRatio(renderer: THREE.WebGLRenderer, cssW: number, cssH: number, mobile: boolean) {
   const dpr = window.devicePixelRatio || 1;
-  const wanted = mobile ? Math.min(dpr, 3) : Math.min(Math.max(dpr, 1.5), 2.5);
-  const budget = mobile ? 3.4e6 : 8.5e6;
+  const wanted = mobile ? Math.min(dpr, 1.25) : Math.min(dpr, 1.5);
+  const budget = mobile ? 2e6 : 4e6;
   const cap = Math.sqrt(budget / Math.max(1, cssW * cssH));
   renderer.setPixelRatio(Math.max(1, Math.min(wanted, cap)));
 }
@@ -55,7 +55,7 @@ export function radialTexture(stops: [number, string][], size = 256) {
 export function canvasTexture(c: HTMLCanvasElement, renderer: THREE.WebGLRenderer) {
   const tex = new THREE.CanvasTexture(c);
   tex.colorSpace = THREE.SRGBColorSpace;
-  tex.anisotropy = Math.min(16, renderer.capabilities.getMaxAnisotropy());
+  tex.anisotropy = Math.min(4, renderer.capabilities.getMaxAnisotropy());
   tex.generateMipmaps = true;
   tex.minFilter = THREE.LinearMipmapLinearFilter;
   tex.magFilter = THREE.LinearFilter;

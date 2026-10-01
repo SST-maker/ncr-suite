@@ -116,7 +116,8 @@ export class FinalScene {
     this.ro = new ResizeObserver(() => this.resize());
     this.ro.observe(o.canvas);
     if (!o.mobile) window.addEventListener("pointermove", this.onMove, { passive: true });
-    this.raf = requestAnimationFrame(this.loop);
+    document.addEventListener("visibilitychange", this.onVisibility);
+    this.onVisibility();
   }
 
   private build() {
@@ -265,21 +266,30 @@ export class FinalScene {
     const c = this.o.canvas;
     this.w = c.clientWidth || 1;
     this.h = c.clientHeight || 1;
-    this.renderer.setSize(this.w, this.h, false);
     applyPixelRatio(this.renderer, this.w, this.h, this.o.mobile);
     this.renderer.setSize(this.w, this.h, false);
     this.camera.aspect = this.w / this.h;
     this.camera.updateProjectionMatrix();
   }
 
+  private onVisibility = () => {
+    cancelAnimationFrame(this.raf);
+    this.raf = 0;
+    if (this.active && !document.hidden) {
+      this.last = performance.now();
+      this.raf = requestAnimationFrame(this.loop);
+    }
+  };
+
   setActive(v: boolean) {
+    if (this.active === v) return;
     this.active = v;
-    if (v) this.last = performance.now();
+    this.onVisibility();
   }
 
   private loop = (now: number) => {
     this.raf = requestAnimationFrame(this.loop);
-    if (!this.active) return;
+    if (!this.active || document.hidden) { cancelAnimationFrame(this.raf); this.raf = 0; return; }
     const dt = Math.min(0.05, Math.max(0, (now - this.last) / 1000));
     this.last = now;
     this.time += dt;
@@ -311,6 +321,7 @@ export class FinalScene {
 
   dispose() {
     cancelAnimationFrame(this.raf);
+    document.removeEventListener("visibilitychange", this.onVisibility);
     this.ro.disconnect();
     window.removeEventListener("pointermove", this.onMove);
     disposeScene(this.scene);

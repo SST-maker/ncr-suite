@@ -107,7 +107,7 @@ export default function Metiers() {
             documents et votre vocabulaire. Les fonctions disponibles dépendent de votre formule et des modules activés.
           </p>
         </div>
-        <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:mt-20 lg:grid-cols-3 lg:gap-6">
+        <div className="metier-grid mt-14 grid gap-5 lg:mt-20 lg:gap-6">
           {SECTORS.map((s, i) => (
             <div key={s.title} data-reveal data-delay={(i % 3) * 0.08}>
               <TiltCard s={s} />

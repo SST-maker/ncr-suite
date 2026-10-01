@@ -45,7 +45,8 @@ export default function Header({ effects, onToggle }: { effects: boolean; onTogg
   }, [open]);
 
   useEffect(() => {
-    const on = () => setScrolled(window.scrollY > 24);
+    let previous = false;
+    const on = () => { const next = window.scrollY > 24; if (next !== previous) { previous = next; setScrolled(next); } };
     on();
     window.addEventListener("scroll", on, { passive: true });
     return () => window.removeEventListener("scroll", on);
@@ -59,7 +60,7 @@ export default function Header({ effects, onToggle }: { effects: boolean; onTogg
       <div
         className={`mx-auto mt-3 flex h-14 w-[min(94vw,1180px)] items-center justify-between rounded-full px-4 pl-5 transition-all duration-500 ${
           scrolled || open
-            ? "border border-white/70 bg-white/75 shadow-[0_10px_40px_-16px_rgba(16,24,40,0.3)] backdrop-blur-xl"
+            ? "border border-white/70 bg-white/75 shadow-[0_10px_40px_-16px_rgba(16,24,40,0.3)] backdrop-blur-md"
             : "border border-transparent bg-transparent"
         }`}
       >
@@ -95,7 +96,7 @@ export default function Header({ effects, onToggle }: { effects: boolean; onTogg
         </div>
       </div>
       {open && (
-        <nav id="mobile-nav" aria-label="Menu mobile" className="mx-auto mt-2 w-[min(94vw,1180px)] rounded-3xl border border-white/70 bg-white/90 p-3 shadow-xl backdrop-blur-xl lg:hidden">
+        <nav id="mobile-nav" aria-label="Menu mobile" className="mx-auto mt-2 w-[min(94vw,1180px)] rounded-3xl border border-white/70 bg-white/90 p-3 shadow-xl backdrop-blur-md lg:hidden">
           {NAV.map((n) => (
             <a key={n.href} href={n.href} onClick={() => setOpen(false)} className="block rounded-2xl px-4 py-3 text-base font-medium text-ink hover:bg-black/5">
               {n.label}

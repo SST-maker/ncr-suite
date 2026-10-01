@@ -71,6 +71,7 @@ export class StoryScene {
   private device = new THREE.Group();
   private screenProgress = 0;
   private accentColor = new THREE.Color();
+  private screens: THREE.Mesh[] = [];
   private overlays: THREE.MeshBasicMaterial[] = [];
   private floaters: FloaterRuntime[] = [];
   private shadow!: THREE.Mesh;
@@ -120,7 +121,8 @@ export class StoryScene {
     this.ro = new ResizeObserver(() => this.resize());
     this.ro.observe(o.canvas);
     if (!o.mobile) window.addEventListener("pointermove", this.onMove, { passive: true });
-    this.raf = requestAnimationFrame(this.loop);
+    document.addEventListener("visibilitychange", this.onVisibility);
+    this.onVisibility();
   }
 
   private build() {
@@ -189,6 +191,7 @@ export class StoryScene {
       m.position.z = 0.0625 + i * 0.0004;
       m.renderOrder = i;
       device.add(m);
+      this.screens.push(m);
       if (i > 0) this.overlays.push(mat);
     });
 
@@ -280,7 +283,6 @@ export class StoryScene {
     const h = c.clientHeight || 1;
     this.w = w;
     this.h = h;
-    this.renderer.setSize(w, h, false);
     applyPixelRatio(this.renderer, w, h, this.o.mobile);
     this.renderer.setSize(w, h, false);
     this.camera.aspect = w / h;
@@ -319,14 +321,24 @@ export class StoryScene {
     this.eff[0] = [d, 0.1, 0.15, 0, (center - h / 2) / h];
   }
 
+  private onVisibility = () => {
+    cancelAnimationFrame(this.raf);
+    this.raf = 0;
+    if (this.active && !document.hidden) {
+      this.last = performance.now();
+      this.raf = requestAnimationFrame(this.loop);
+    }
+  };
+
   setActive(v: boolean) {
+    if (this.active === v) return;
     this.active = v;
-    if (v) this.last = performance.now();
+    this.onVisibility();
   }
 
   private loop = (now: number) => {
     this.raf = requestAnimationFrame(this.loop);
-    if (!this.active) return;
+    if (!this.active || document.hidden) { cancelAnimationFrame(this.raf); this.raf = 0; return; }
     const dt = clamp((now - this.last) / 1000, 0, 0.05);
     this.last = now;
     this.time += dt;
@@ -373,6 +385,10 @@ export class StoryScene {
       const chapter = k + 1;
       m.opacity = sstep(chapter - 0.6, chapter - 0.4, this.screenProgress);
     });
+    // Draw only the top opaque screen and the one currently fading over it.
+    let opaque = 0;
+    this.overlays.forEach((m, k) => { if (m.opacity >= 1) opaque = k + 1; });
+    this.screens.forEach((mesh, k) => { mesh.visible = k === opaque || (k > opaque && (mesh.material as THREE.MeshBasicMaterial).opacity > 0); });
     const colorIndex = s < 0.45 ? this.o.getHeroView() - 1 : Math.round(s) - 1;
     const accent = this.accentColor.set(VERTICALS[colorIndex]?.accent ?? "#61728c");
     (this.halo.material as THREE.MeshBasicMaterial).color.lerp(accent, 1 - Math.exp(-dt * 4));
@@ -416,6 +432,7 @@ export class StoryScene {
 
   dispose() {
     cancelAnimationFrame(this.raf);
+    document.removeEventListener("visibilitychange", this.onVisibility);
     this.ro.disconnect();
     window.removeEventListener("pointermove", this.onMove);
     disposeScene(this.scene);

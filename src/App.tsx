@@ -26,13 +26,13 @@ const graphics = (() => {
 
 /** Échelle de dessin des écrans de bureau (base 1024×640) : 3x = 3072×1920 px, au-delà du Full HD. */
 function desktopScale() {
-  return Math.max(1.5, Math.min(3, graphics.maxTexture / 1024));
+  return Math.max(1.5, Math.min(2, graphics.maxTexture / 1024));
 }
 
 /** Échelle des écrans mobiles (base 480×600) : ~1200×1500 px, calée sur la densité de l'appareil pour éviter tout flou de mipmap. */
 function mobileScale() {
   const dpr = window.devicePixelRatio || 1;
-  return Math.max(1.75, Math.min(dpr >= 3 ? 2.6 : 2.2, graphics.maxTexture / 600));
+  return Math.max(1.75, Math.min(dpr >= 3 ? 2 : 1.75, graphics.maxTexture / 600));
 }
 
 interface Assets {
